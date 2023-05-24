@@ -1,21 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, ComponentType } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
-import SignIn from './pages/Authentication/SignIn';
-import SignUp from './pages/Authentication/SignUp';
-import Calendar from './pages/Calendar';
-import Chart from './pages/Chart';
-import ECommerce from './pages/Dashboard/ECommerce';
-import FormElements from './pages/Form/FormElements';
-import FormLayout from './pages/Form/FormLayout';
-import Profile from './pages/Profile';
-import Settings from './pages/Settings';
-import Tables from './pages/Tables';
-import Alerts from './pages/UiElements/Alerts';
-import Buttons from './pages/UiElements/Buttons';
-import ClientsPage from './pages/ClientsPage';
-import AppointmentsPage from './pages/AppointmentsPage';
-import PaymentsPage from './pages/PaymentsPage';
+import routes from './data/routes';
+
+interface Route {
+  path: string;
+  component: ComponentType<any>;
+  roles: string[];
+}
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -33,26 +25,23 @@ function App() {
     setTimeout(() => setLoading(false), 1000);
   }, []);
 
+  function filterRoutesByRole(routes: Route[]): Route[] {
+    return routes.filter((route) => {
+      const { roles } = route;
+      return roles.includes('admin') || roles.includes('any');
+    });
+  }
+  const filteredRoutes = filterRoutesByRole(routes);
+  console.log(filteredRoutes);
+
   return loading ? (
     <p className=" text-center text-danger">Failed to load app</p>
   ) : (
     <>
       <Routes>
-        <Route path="/" element={<ECommerce />} />
-        <Route path="/calendar" element={<Calendar />} />
-        <Route path="/clients" element={<ClientsPage />} />
-        <Route path="/appointments" element={<AppointmentsPage />} />
-        <Route path="/payments" element={<PaymentsPage />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/forms/form-elements" element={<FormElements />} />
-        <Route path="/forms/form-layout" element={<FormLayout />} />
-        <Route path="/tables" element={<Tables />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/chart" element={<Chart />} />
-        <Route path="/ui/alerts" element={<Alerts />} />
-        <Route path="/ui/buttons" element={<Buttons />} />
-        <Route path="/auth/signin" element={<SignIn />} />
-        <Route path="/auth/signup" element={<SignUp />} />
+        {filteredRoutes.map((route, index) => (
+          <Route path={route.path} key={index} element={<route.component />} />
+        ))}
       </Routes>
     </>
   );
