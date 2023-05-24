@@ -1,4 +1,4 @@
-import SignIn from '../pages/Authentication/SignIn';
+// import SignIn from '../pages/Authentication/SignIn';
 // import SignUp from './pages/Authentication/SignUp';
 import Calendar from '../pages/Calendar';
 import ECommerce from '../pages/Dashboard/ECommerce';
@@ -39,11 +39,11 @@ const routes = [
     component: PaymentsPage,
     roles: ['admin'],
   },
-  {
-    path: '/auth/signin',
-    component: SignIn,
-    roles: ['any'],
-  },
+  // {
+  //   path: '/signin',
+  //   component: SignIn,
+  //   roles: ['any'],
+  // },
   {
     path: '*',
     component: NotFoundPage,
