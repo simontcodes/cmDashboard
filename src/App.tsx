@@ -1,5 +1,5 @@
 import { useEffect, useState, ComponentType, useContext } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import SignIn from './pages/Authentication/SignIn';
 import routes from './data/routes';
 import { AuthProvider, AuthContext } from './context/AuthContext';
@@ -10,17 +10,27 @@ interface Route {
   roles: string[];
 }
 
+interface RoutesByRoleState extends Array<Route> {}
+
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
-  const authContext = useContext(AuthContext);
+  const [routesByRole, setRoutesByRole] = useState<RoutesByRoleState>([]);
+  // const authContext = useContext(AuthContext);
+  const navigate = useNavigate();
 
-  if (!authContext) {
-    throw new Error(
-      'AuthContext is undefined. Make sure AuthProvider is properly set up.'
-    );
+  // Check if the context is defined and extract the values
+  // const isLoggedIn = authContext?.isLoggedIn;
+  // const role = authContext?.role;
+
+  function filterRoutesByRole(routes: Route[], roleType: string): Route[] {
+    console.log('inside filtering routes');
+    // Filter the routes based on the specified role
+    const filteredRoutes = routes.filter((route) => {
+      return route.roles.includes(roleType) || route.roles.includes('any');
+    });
+    console.log(filteredRoutes);
+    return filteredRoutes;
   }
-
-  const { role, isLoggedIn } = authContext;
 
   const preloader = document.getElementById('preloader');
 
@@ -36,34 +46,39 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (isLoggedIn) {
-    }
-  }, [isLoggedIn]);
+    navigate('/');
+  }, [routesByRole.length > 0]);
 
-  function filterRoutesByRole(routes: Route[]): Route[] {
-    return routes.filter((route) => {
-      const { roles } = route;
-      return roles.includes('admin') || roles.includes('any');
-    });
-  }
-  const filteredRoutes = filterRoutesByRole(routes);
-  console.log(filteredRoutes);
+  useEffect(() => {
+    const sessionRole = sessionStorage.getItem('role');
+    if (!sessionStorage.getItem('token')) {
+      navigate('/signin');
+    } else {
+      if (sessionRole !== null) {
+        setRoutesByRole(filterRoutesByRole(routes, sessionRole));
+      } else {
+        // Handle the case when sessionRole is null (e.g., set default role or handle error)
+      }
+    }
+  }, []);
 
   return loading ? (
-    <p className=" text-center text-danger">Failed to load app</p>
+    <p className=" text-center text-danger">Loading</p>
   ) : (
     <>
       <AuthProvider>
         <Routes>
           {/* Protected Routes */}
 
-          {filteredRoutes.map((route, index) => (
+          {routesByRole.map((route, index) => (
             <Route
               path={route.path}
               key={index}
               element={<route.component />}
             />
           ))}
+
+          {/* Protected Routes */}
           <Route path="/signin" element={<SignIn />} />
         </Routes>
       </AuthProvider>

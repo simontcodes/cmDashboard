@@ -38,17 +38,15 @@ const SignIn: React.FC = () => {
         password: password,
       });
       console.log(response);
-      sessionStorage.setItem('token', response.data.token);
-      sessionStorage.setItem('role', response.data.role);
       // Update the authentication state
       setIsLoggedIn(true);
       setRole(response.data.role);
-
+      sessionStorage.setItem('token', response.data.token);
+      sessionStorage.setItem('role', response.data.role);
       // Continue with any other logic after successful login
       navigate('/');
     } catch (error) {
       // Handle any login errors
-      // ...
     }
   };
   return (

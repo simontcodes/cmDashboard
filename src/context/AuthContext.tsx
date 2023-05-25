@@ -10,7 +10,7 @@ import React, {
 interface AuthContextProps {
   isLoggedIn: boolean;
   setIsLoggedIn: Dispatch<SetStateAction<boolean>>;
-  role: string;
+  role: string | undefined;
   setRole: Dispatch<SetStateAction<string>>;
 }
 
