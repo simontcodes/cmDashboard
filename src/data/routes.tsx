@@ -3,6 +3,7 @@
 import Calendar from '../pages/Calendar';
 import ECommerce from '../pages/Dashboard/ECommerce';
 import ClientsPage from '../pages/ClientsPage';
+import ClientPage from '../pages/ClientPage';
 import AppointmentsPage from '../pages/AppointmentsPage';
 import PaymentsPage from '../pages/PaymentsPage';
 import ProfilePage from '../pages/ProfilePage';
@@ -38,6 +39,11 @@ const routes = [
     path: '/payments',
     component: PaymentsPage,
     roles: ['admin'],
+  },
+  {
+    path: '/client/:id',
+    component: ClientPage,
+    roles: ['admin', 'client'],
   },
   // {
   //   path: '/signin',
