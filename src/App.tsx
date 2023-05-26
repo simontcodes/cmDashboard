@@ -15,12 +15,15 @@ interface RoutesByRoleState extends Array<Route> {}
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const [routesByRole, setRoutesByRole] = useState<RoutesByRoleState>([]);
-  // const authContext = useContext(AuthContext);
+  const authContext = useContext(AuthContext);
   const navigate = useNavigate();
 
-  // Check if the context is defined and extract the values
-  // const isLoggedIn = authContext?.isLoggedIn;
-  // const role = authContext?.role;
+  // Ensure that the authContext is defined before accessing its values
+  if (!authContext) {
+    return null; // or return a loading/error component
+  }
+
+  const { isLoggedIn, role } = authContext;
 
   function filterRoutesByRole(routes: Route[], roleType: string): Route[] {
     console.log('inside filtering routes');
@@ -38,7 +41,7 @@ function App() {
     setTimeout(() => {
       preloader.style.display = 'none';
       setLoading(false);
-    }, 2000);
+    }, 1000);
   }
 
   useEffect(() => {
@@ -46,13 +49,10 @@ function App() {
   }, []);
 
   useEffect(() => {
-    navigate('/');
-  }, [routesByRole.length > 0]);
-
-  useEffect(() => {
     const sessionRole = sessionStorage.getItem('role');
     if (!sessionStorage.getItem('token')) {
       navigate('/signin');
+      console.log(isLoggedIn);
     } else {
       if (sessionRole !== null) {
         setRoutesByRole(filterRoutesByRole(routes, sessionRole));
@@ -60,30 +60,28 @@ function App() {
         // Handle the case when sessionRole is null (e.g., set default role or handle error)
       }
     }
-  }, []);
+  }, [isLoggedIn]);
 
   return loading ? (
     <p className=" text-center text-danger">Loading</p>
   ) : (
-    <>
-      <AuthProvider>
-        <Routes>
-          {/* Protected Routes */}
-
-          {routesByRole.map((route, index) => (
-            <Route
-              path={route.path}
-              key={index}
-              element={<route.component />}
-            />
-          ))}
-
-          {/* Protected Routes */}
-          <Route path="/signin" element={<SignIn />} />
-        </Routes>
-      </AuthProvider>
-    </>
+    <Routes>
+      {/* Protected Routes */}
+      {routesByRole.map((route, index) => (
+        <Route path={route.path} key={index} element={<route.component />} />
+      ))}
+      {/* Protected Routes */}
+      <Route path="/signin" element={<SignIn />} />
+    </Routes>
   );
 }
 
-export default App;
+function RootComponent() {
+  return (
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  );
+}
+
+export default RootComponent;

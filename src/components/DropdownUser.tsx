@@ -1,13 +1,28 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 
 import UserOne from '../images/user/user-01.png';
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const authContext = useContext(AuthContext);
+
+  if (!authContext) {
+    return null; // or return a loading/error component
+  }
+
+  const { setIsLoggedIn, setRole } = authContext;
 
   const trigger = useRef<any>(null);
   const dropdown = useRef<any>(null);
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setRole('');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('role');
+  };
 
   // close on click outside
   useEffect(() => {
@@ -155,7 +170,10 @@ const DropdownUser = () => {
             </Link>
           </li>
         </ul>
-        <button className="flex items-center gap-3.5 py-4 px-6 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base">
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-3.5 py-4 px-6 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
+        >
           <svg
             className="fill-current"
             width="22"
