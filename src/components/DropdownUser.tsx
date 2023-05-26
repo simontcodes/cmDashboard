@@ -1,18 +1,35 @@
-import { useEffect, useRef, useState, useContext } from 'react';
+import { useEffect, useRef, useState, useContext, ComponentType } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
+import routes from '../data/routes';
 
 import UserOne from '../images/user/user-01.png';
+
+interface Route {
+  path: string;
+  component: ComponentType<any>;
+  roles: string[];
+}
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const authContext = useContext(AuthContext);
 
+  function filterRoutesByRole(routes: Route[], roleType: string): Route[] {
+    console.log('inside filtering routes');
+    // Filter the routes based on the specified role
+    const filteredRoutes = routes.filter((route) => {
+      return route.roles.includes(roleType) || route.roles.includes('any');
+    });
+    console.log(filteredRoutes);
+    return filteredRoutes;
+  }
+
   if (!authContext) {
     return null; // or return a loading/error component
   }
 
-  const { setIsLoggedIn, setRole } = authContext;
+  const { setIsLoggedIn, setRole, setRoutesByRole } = authContext;
 
   const trigger = useRef<any>(null);
   const dropdown = useRef<any>(null);
@@ -20,6 +37,7 @@ const DropdownUser = () => {
   const handleLogout = () => {
     setIsLoggedIn(false);
     setRole('');
+    setRoutesByRole(filterRoutesByRole(routes, 'any'));
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('role');
   };

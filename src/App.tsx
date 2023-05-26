@@ -10,11 +10,11 @@ interface Route {
   roles: string[];
 }
 
-interface RoutesByRoleState extends Array<Route> {}
+// interface RoutesByRoleState extends Array<Route> {}
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
-  const [routesByRole, setRoutesByRole] = useState<RoutesByRoleState>([]);
+  // const [routesByRole, setRoutesByRole] = useState<RoutesByRoleState>([]);
   const authContext = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -23,7 +23,7 @@ function App() {
     return null; // or return a loading/error component
   }
 
-  const { isLoggedIn, role } = authContext;
+  const { isLoggedIn, role, routesByRole, setRoutesByRole } = authContext;
 
   function filterRoutesByRole(routes: Route[], roleType: string): Route[] {
     console.log('inside filtering routes');
@@ -51,14 +51,13 @@ function App() {
   useEffect(() => {
     const sessionRole = sessionStorage.getItem('role');
     if (!sessionStorage.getItem('token')) {
+      setRoutesByRole(filterRoutesByRole(routes, 'any'));
       navigate('/signin');
-      console.log(isLoggedIn);
+      console.log(isLoggedIn, 'ïsLoggedIn ?');
+    } else if (sessionRole !== null) {
+      setRoutesByRole(filterRoutesByRole(routes, sessionRole));
     } else {
-      if (sessionRole !== null) {
-        setRoutesByRole(filterRoutesByRole(routes, sessionRole));
-      } else {
-        // Handle the case when sessionRole is null (e.g., set default role or handle error)
-      }
+      // Handle the case when sessionRole is null (e.g., set default role or handle error)
     }
   }, [isLoggedIn]);
 
