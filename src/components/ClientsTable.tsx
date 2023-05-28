@@ -4,6 +4,7 @@ import UserPicture from '../images/user/user-default.png';
 import axios from 'axios';
 import DeleteIcon from '../images/icon/icon-delete.svg';
 import EditIcon from '../images/icon/icon-edit.svg';
+import SearchIcon from '../images/icon/icon-search.svg';
 
 interface Client {
   _id: number;
@@ -16,6 +17,7 @@ interface Client {
 
 const TableOne = () => {
   const [clients, setClients] = useState<Client[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,12 +39,34 @@ const TableOne = () => {
     fetchData();
   }, []);
 
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredClients = clients.filter((client) =>
+    client.firstName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
       <h4 className="mb-6 text-xl font-semibold text-black dark:text-white">
         Clients
       </h4>
 
+      <div className="relative mt-4 mb-6 w-60">
+        <input
+          type="text"
+          placeholder="Search by first name"
+          value={searchTerm}
+          onChange={handleSearch}
+          className="w-full rounded-sm border border-stroke px-3 py-2 pl-10"
+        />
+        <img
+          className="text-gray-400 absolute left-3 top-2.5 h-5 w-5"
+          src={SearchIcon}
+          alt="search icon"
+        />
+      </div>
       <div className="flex flex-col">
         <div className="grid grid-cols-3 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-5">
           <div className="p-2.5 xl:p-5">
@@ -72,7 +96,7 @@ const TableOne = () => {
           </div>
         </div>
 
-        {clients.map((client, index) => {
+        {filteredClients.map((client, index) => {
           return (
             <div
               key={index}
