@@ -41,7 +41,7 @@ const routes = [
     roles: ['admin'],
   },
   {
-    path: '/client/:id',
+    path: '/client/:userId',
     component: ClientPage,
     roles: ['admin', 'client'],
   },
