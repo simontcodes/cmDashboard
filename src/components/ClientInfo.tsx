@@ -6,8 +6,8 @@ interface Client {
   phoneNumber: string;
   email: string;
   password: string;
-  payments: string;
-  appointments: string;
+  payments: string[];
+  appointments: string[];
   clientInfo: {
     educationLevel?: string;
     isMarried?: boolean;

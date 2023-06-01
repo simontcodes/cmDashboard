@@ -1,50 +1,32 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import UserPicture from '../images/user/user-default.png';
-import axios from 'axios';
 import moment from 'moment';
 import DeleteIcon from '../images/icon/icon-delete.svg';
 import EditIcon from '../images/icon/icon-edit.svg';
-// import SearchIcon from '../images/icon/icon-search.svg';
 
 interface Appointment {
   _id: string;
   time: string;
   date: Date;
   typeOfAppointment: number;
-  client: string;
+  client: {
+    id: string;
+    fullName: string;
+  };
   createdAt: Date,
   status: string,
   // Add more properties as needed
 }
 
-const AppointmentsTable = () => {
+interface AppointmentsTableProps {
+  appointmentsData: Appointment[];
+}
+
+const AppointmentsTable: React.FC<AppointmentsTableProps> = ({ appointmentsData }) => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [filteredAppointments, setFilteredAppointments] = useState<Appointment[]>([]);
-  // const [appointments, setAppointments] = useState<Appointment[]>([]);
-  // let appointments: Appointment[] = [];
-  
+  const [filteredAppointments, setFilteredAppointments] = useState<Appointment[]>(appointmentsData);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = sessionStorage.getItem('token');
-        const response = await axios.get('http://localhost:8080/appointments', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setFilteredAppointments(response.data) ;
-        console.log(response.data);
-      } catch (error) {
-        console.error('Error retrieving users:', error);
-        // Handle the error
-      }
-    };
-
-    fetchData();
-  }, []);
 
   const handleSearch = () => {
     const filtered = filteredAppointments.filter(appointment => {
@@ -61,20 +43,6 @@ const AppointmentsTable = () => {
         Appointments
       </h4>
 
-      {/* <div className="relative mt-4 mb-6 w-60">
-        <input
-          type="text"
-          placeholder="Search by first name"
-          value={searchTerm}
-          onChange={handleSearch}
-          className="w-full rounded-sm border border-stroke px-3 py-2 pl-10"
-        />
-        <img
-          className="text-gray-400 absolute left-3 top-2.5 h-5 w-5"
-          src={SearchIcon}
-          alt="search icon"
-        />
-      </div> */}
       <div className="flex items-center mb-4">
         <input
           type="date"
@@ -124,23 +92,21 @@ const AppointmentsTable = () => {
           </div>
         </div>
 
-        {filteredAppointments.map((appointment) => {
+        {filteredAppointments.map((appointment, index) => {
           return (
             <div
-              key={appointment._id}
+              key={index}
               className="grid grid-cols-3 border-b border-stroke dark:border-strokedark sm:grid-cols-5"
             >
               <div className="flex items-center gap-3 p-2.5 xl:p-5">
-                <div className="flex-shrink-0">
-                  <img src={UserPicture} className=" w-15 " alt="Brand" />
-                </div>
+               
                 <p className="hidden text-black dark:text-white sm:block">
                   <Link to={`/appointment/${appointment._id}`}> {moment(appointment.date).format('MMMM Do, YYYY')} {appointment.time}</Link>
                 </p>
               </div>
 
               <div className="flex items-center justify-center p-2.5 xl:p-5">
-                <p className="text-black dark:text-white">{appointment.client}</p>
+              <Link to={`/client/${appointment.client.id}`}>  <p className="text-black dark:text-white">{appointment.client.fullName}</p></Link>
               </div>
 
               <div className="flex items-center justify-center p-2.5 xl:p-5">
@@ -179,8 +145,6 @@ const AppointmentsTable = () => {
               <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
                 <img className="ml-5" src={EditIcon} alt="delete icon" />
                 <img className="ml-5" src={DeleteIcon} alt="delete icon" />
-
-                {/* <p className="text-meta-5">Editar, eliminar</p> */}
               </div>
             </div>
           );

@@ -14,8 +14,8 @@ interface Client {
   phoneNumber: string;
   email: string;
   password: string;
-  payments: string;
-  appointments: string;
+  payments: string[];
+  appointments: string[];
   clientInfo: {
     educationLevel?: string;
     isMarried?: boolean;
@@ -41,6 +41,7 @@ export default function ClientPage() {
   const [show, setShow] = useState('client-info');
   const [client, setClient] = useState<Client>({} as Client);
   const { userId } = useParams();
+  //add state for clients appointments and clients payments and pass it as props
 
   const handleClick = (value: string) => {
     setShow(value);
@@ -60,6 +61,8 @@ export default function ClientPage() {
       })
       .catch((error) => console.error(error));
   }, []);
+
+
 
   return (
     <DefaultLayout>
