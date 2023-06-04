@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import UserPicture from '../images/user/user-default.png';
-import axios from 'axios';
 import DeleteIcon from '../images/icon/icon-delete.svg';
 import EditIcon from '../images/icon/icon-edit.svg';
 import SearchIcon from '../images/icon/icon-search.svg';
@@ -15,37 +14,23 @@ interface Client {
   // Add more properties as needed
 }
 
-const TableOne = () => {
-  const [clients, setClients] = useState<Client[]>([]);
+interface ClientsTableProps {
+  clients: Client[];
+}
+
+const ClientsTable: React.FC<ClientsTableProps> = ({ clients }) => {
   const [searchTerm, setSearchTerm] = useState('');
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = sessionStorage.getItem('token');
-        const response = await axios.get('http://localhost:8080/users', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setClients(response.data);
-        console.log(response.data);
-      } catch (error) {
-        console.error('Error retrieving users:', error);
-        // Handle the error
-      }
-    };
-
-    fetchData();
-  }, []);
+  const [filteredClients, setFilteredClients] = useState<Client[]>(clients);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
+    const searchText = event.target.value;
+    setSearchTerm(searchText);
+    setFilteredClients(
+      clients.filter((client) =>
+        client.firstName.toLowerCase().includes(searchText.toLowerCase())
+      )
+    );
   };
-
-  const filteredClients = clients.filter((client) =>
-    client.firstName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
@@ -137,4 +122,4 @@ const TableOne = () => {
   );
 };
 
-export default TableOne;
+export default ClientsTable;

@@ -12,11 +12,10 @@ interface Appointment {
     id: string;
     fullName: string;
   };
-  createdAt: Date,
-  status: string,
+  createdAt: Date;
+  status: string;
   // Add more properties as needed
 }
-
 
 export default function AppointmentsPage() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -30,7 +29,7 @@ export default function AppointmentsPage() {
             Authorization: `Bearer ${token}`,
           },
         });
-        setAppointments(response.data) ;
+        setAppointments(response.data);
         console.log(response.data);
       } catch (error) {
         console.error('Error retrieving users:', error);
@@ -42,7 +41,9 @@ export default function AppointmentsPage() {
   }, []);
   return (
     <DefaultLayout>
-     {appointments.length > 0 && <AppointmentsTable appointmentsData={appointments} />}
+      {appointments.length > 0 && (
+        <AppointmentsTable appointments={appointments} />
+      )}
     </DefaultLayout>
   );
 }

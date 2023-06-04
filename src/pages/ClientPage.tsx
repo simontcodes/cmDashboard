@@ -3,7 +3,9 @@ import { useParams } from 'react-router-dom';
 import Breadcrumb from '../components/Breadcrumb';
 import DefaultLayout from '../layout/DefaultLayout';
 import ClientInfo from '../components/ClientInfo';
-import Appointments from '../components/Appointments';
+
+import AppointmentsTable from '../components/AppointmentsTable';
+import PaymentsTable from '../components/PaymentsTable';
 import axios from 'axios';
 
 interface Client {
@@ -36,10 +38,39 @@ interface Client {
     }[];
   };
 }
+interface Appointment {
+  _id: string;
+  time: string;
+  date: Date;
+  typeOfAppointment: number;
+  client: {
+    id: string;
+    fullName: string;
+  };
+  createdAt: Date;
+  status: string;
+  // Add more properties as needed
+}
+
+interface Payment {
+  _id: number;
+  fullName: string;
+  client: {
+    id: string;
+    fullName: string;
+  };
+  amount: number;
+  paymentSource: string;
+  createdAt: Date;
+  // Add more properties as needed
+}
 
 export default function ClientPage() {
   const [show, setShow] = useState('client-info');
   const [client, setClient] = useState<Client>({} as Client);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [payments, setPayments] = useState<Payment[]>([]);
+
   const { userId } = useParams();
   //add state for clients appointments and clients payments and pass it as props
 
@@ -48,21 +79,42 @@ export default function ClientPage() {
   };
 
   useEffect(() => {
-    console.log(userId);
-    axios
-      .get(`http://localhost:8080/users/client/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem('token')}`,
-        },
-      })
-      .then((response) => {
-        console.log(response.data);
-        setClient(response.data);
-      })
-      .catch((error) => console.error(error));
-  }, []);
-
-
+    if (show === 'client-info') {
+      axios
+        .get(`http://localhost:8080/users/client/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+          },
+        })
+        .then((response) => {
+          console.log(response.data);
+          setClient(response.data);
+        })
+        .catch((error) => console.error(error));
+    } else if (show === 'appointments') {
+      axios
+        .get(`http://localhost:8080/appointments?userId=${userId}`, {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+          },
+        })
+        .then((response) => {
+          console.log(response.data);
+          setAppointments(response.data);
+        });
+    } else if (show === 'payments') {
+      axios
+        .get(`http://localhost:8080/payments?userId=${userId}`, {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+          },
+        })
+        .then((response) => {
+          console.log(response.data);
+          setPayments(response.data);
+        });
+    }
+  }, [show]);
 
   return (
     <DefaultLayout>
@@ -100,8 +152,10 @@ export default function ClientPage() {
         </button>
       </div>
       {show === 'client-info' && <ClientInfo client={client} />}
-      {show === 'appointments' && <Appointments />}
-      {show === 'payments' && <Appointments />}
+      {show === 'appointments' && appointments.length && (
+        <AppointmentsTable appointments={appointments} />
+      )}
+      {show === 'payments' && <PaymentsTable payments={payments} />}
     </DefaultLayout>
   );
 }
