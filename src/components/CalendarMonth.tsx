@@ -1,12 +1,10 @@
-import Breadcrumb from '../components/Breadcrumb';
-import DefaultLayout from '../layout/DefaultLayout';
+import Breadcrumb from './Breadcrumb';
 
-const Calendar = () => {
+const CalendarMonth = () => {
   return (
-    <DefaultLayout>
+    <>
       <Breadcrumb pageName="Calendar" />
 
-      {/* <!-- ====== Calendar Section Start ====== --> */}
       <div className="w-full max-w-full rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
         <table className="w-full">
           <thead>
@@ -266,9 +264,8 @@ const Calendar = () => {
           </tbody>
         </table>
       </div>
-      {/* <!-- ====== Calendar Section End ====== --> */}
-    </DefaultLayout>
+    </>
   );
 };
 
-export default Calendar;
+export default CalendarMonth;

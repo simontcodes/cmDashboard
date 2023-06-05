@@ -1,6 +1,6 @@
 // import SignIn from '../pages/Authentication/SignIn';
 // import SignUp from './pages/Authentication/SignUp';
-import Calendar from '../pages/Calendar';
+import CalendarPage from '../pages/CalendarPage';
 import ECommerce from '../pages/Dashboard/ECommerce';
 import ClientsPage from '../pages/ClientsPage';
 import ClientPage from '../pages/ClientPage';
@@ -17,7 +17,7 @@ const routes = [
   },
   {
     path: '/calendar',
-    component: Calendar,
+    component: CalendarPage,
     roles: ['admin'],
   },
   {

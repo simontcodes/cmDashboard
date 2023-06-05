@@ -23,7 +23,7 @@ function App() {
     return null; // or return a loading/error component
   }
 
-  const { isLoggedIn, role, routesByRole, setRoutesByRole } = authContext;
+  const { isLoggedIn, routesByRole, setRoutesByRole } = authContext;
 
   function filterRoutesByRole(routes: Route[], roleType: string): Route[] {
     console.log('inside filtering routes');
@@ -53,7 +53,7 @@ function App() {
     if (!sessionStorage.getItem('token')) {
       setRoutesByRole(filterRoutesByRole(routes, 'any'));
       navigate('/signin');
-      console.log(isLoggedIn, 'ïsLoggedIn ?');
+      console.log(isLoggedIn, 'isLoggedIn ?');
     } else if (sessionRole !== null) {
       setRoutesByRole(filterRoutesByRole(routes, sessionRole));
     } else {
