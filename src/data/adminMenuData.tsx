@@ -4,14 +4,27 @@ import IconPayment from '../images/icon/icon-payment.svg';
 import IconAppointment from '../images/icon/icon-appointment.svg';
 import IconSettings from '../images/icon/icon-settings.svg';
 import IconProfile from '../images/icon/icon-profile.svg';
+import IconDashboard from '../images/icon/icon-dashboard.svg';
 
 const adminMenuData = [
+  {
+    to: '/',
+    includes: 'dashboard',
+    icon: IconDashboard,
+    name: 'Dashboard',
+    alt: 'dashboard icon',
+    submenu: [{ to: '/', name: 'Ecommerce', includes: 'ecommerce' }],
+  },
   {
     to: '/calendar',
     includes: 'calendar',
     icon: IconCalendar,
     name: 'Calendar',
     alt: 'calendar icon',
+    submenu: [
+      { to: '/calendar', name: 'Month', includes: 'calendar' },
+      { to: '/calendar', name: 'Year', includes: 'calendar' },
+    ],
   },
   {
     to: '/clients',
@@ -19,6 +32,7 @@ const adminMenuData = [
     icon: IconClients,
     name: 'Clients',
     alt: 'clients icon',
+    submenu: [],
   },
   {
     to: '/appointments',
@@ -26,6 +40,7 @@ const adminMenuData = [
     icon: IconAppointment,
     name: 'Appointments',
     alt: 'appointments icon',
+    submenu: [],
   },
   {
     to: '/payments',
@@ -33,6 +48,7 @@ const adminMenuData = [
     icon: IconPayment,
     name: 'Payments',
     alt: 'payments icon',
+    submenu: [],
   },
   {
     to: '/profile',
@@ -40,6 +56,7 @@ const adminMenuData = [
     icon: IconProfile,
     name: 'Profile',
     alt: 'Profile icon',
+    submenu: [],
   },
   {
     to: '/settings',
@@ -47,6 +64,7 @@ const adminMenuData = [
     icon: IconSettings,
     name: 'Settings',
     alt: 'settings icon',
+    submenu: [],
   },
 ];
 

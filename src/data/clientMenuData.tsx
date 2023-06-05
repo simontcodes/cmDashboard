@@ -4,6 +4,7 @@ const clientMenuData = [
     includes: 'profile',
     icon: 'IconProfile',
     name: 'Profile',
+    submenu: [],
   },
 ];
 
