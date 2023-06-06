@@ -1,19 +1,58 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import DefaultLayout from '../layout/DefaultLayout';
 import CalendarMonth from '../components/CalendarMonth';
 import CalendarWeek from '../components/CalendarWeek';
+import axios from 'axios';
+
+interface Appointment {
+  _id: string;
+  time: string;
+  date: Date;
+  typeOfAppointment: number;
+  client: {
+    id: string;
+    fullName: string;
+  };
+  createdAt: Date;
+  status: string;
+  // Add more properties as needed
+}
 
 export default function CalendarPage() {
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [view, setView] = useState('month');
 
   const handleToggle = () => {
     setView((prevView) => (prevView === 'month' ? 'week' : 'month'));
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = sessionStorage.getItem('token');
+        const response = await axios.get('http://localhost:8080/appointments', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setAppointments(response.data);
+      } catch (error) {
+        console.error('Error retrieving users:', error);
+        // Handle the error
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <DefaultLayout>
       <div>
-        {view === 'month' ? <CalendarMonth /> : <CalendarWeek />}
+        {view === 'month' ? (
+          <CalendarMonth />
+        ) : (
+          <CalendarWeek appointments={appointments} />
+        )}
         <div className="flex items-center">
           <span className="mr-2"> Month</span>
           <label className="relative inline-flex items-center">

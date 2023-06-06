@@ -133,7 +133,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               {/* <!-- Menu Items from Data --> */}
               {links.map((link, index) => {
                 return (
-                  <>
+                  <React.Fragment key={index}>
                     {link.submenu.length > 0 && (
                       <SidebarLinkGroup
                         key={index}
@@ -174,8 +174,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               }`}
                             >
                               <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-                                {link.submenu.map((item, index) => (
-                                  <li key={index}>
+                                {link.submenu.map((item, subindex) => (
+                                  <li key={subindex}>
                                     <NavLink
                                       to={`${item.to}`}
                                       className={({ isActive }) =>
@@ -208,7 +208,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         </NavLink>
                       </li>
                     )}
-                  </>
+                  </React.Fragment>
                 );
               })}
               {/* <!-- Menu Items from Data --> */}

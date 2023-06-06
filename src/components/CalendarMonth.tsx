@@ -1,9 +1,10 @@
 import Breadcrumb from './Breadcrumb';
 
 const CalendarMonth = () => {
+  const currentDate = new Date();
   return (
     <>
-      <Breadcrumb pageName="Calendar" />
+      <Breadcrumb pageName={`${currentDate.getMonth()}`} />
 
       <div className="w-full max-w-full rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
         <table className="w-full">

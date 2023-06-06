@@ -37,7 +37,6 @@ const SignIn: React.FC = () => {
         email: email,
         password: password,
       });
-      console.log(response);
       // Update the authentication state
       setIsLoggedIn(true);
       setRole(response.data.role);

@@ -26,12 +26,10 @@ function App() {
   const { isLoggedIn, routesByRole, setRoutesByRole } = authContext;
 
   function filterRoutesByRole(routes: Route[], roleType: string): Route[] {
-    console.log('inside filtering routes');
     // Filter the routes based on the specified role
     const filteredRoutes = routes.filter((route) => {
       return route.roles.includes(roleType) || route.roles.includes('any');
     });
-    console.log(filteredRoutes);
     return filteredRoutes;
   }
 
@@ -53,7 +51,6 @@ function App() {
     if (!sessionStorage.getItem('token')) {
       setRoutesByRole(filterRoutesByRole(routes, 'any'));
       navigate('/signin');
-      console.log(isLoggedIn, 'isLoggedIn ?');
     } else if (sessionRole !== null) {
       setRoutesByRole(filterRoutesByRole(routes, sessionRole));
     } else {
