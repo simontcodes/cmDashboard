@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Breadcrumb from './Breadcrumb';
+import Modal from './Modal';
+import SuccessAlert from './Alerts';
 import moment from 'moment';
+import axios from 'axios';
 
 interface Appointment {
   _id: string;
@@ -30,6 +33,8 @@ const CalendarWeek: React.FC<CalendarWeekProps> = ({ appointments }) => {
   >([]);
   const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
   const [currentDate, setCurrentDate] = useState(moment()); // Store the current date as a state
+  const [showModal, setShowModal] = useState(false);
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
 
   const [hoveredAppointment, setHoveredAppointment] = useState<string | null>(
     null
@@ -70,7 +75,14 @@ const CalendarWeek: React.FC<CalendarWeekProps> = ({ appointments }) => {
     setCurrentDate(previousWeek);
   };
 
-  const handleCancelAppointment = (appointmentId: string) => {
+  const closeCancelModal = () => {
+    setShowModal(false); // Close the modal
+  };
+
+  const handleCancelAppointment = () => {
+    setShowModal(true);
+  };
+  const confirmCancelAppointment = (appointmentId: string) => {
     // Find the appointment with the given ID
     const canceledAppointment = appointments.find(
       (appointment) => appointment._id === appointmentId
@@ -81,12 +93,41 @@ const CalendarWeek: React.FC<CalendarWeekProps> = ({ appointments }) => {
       // Update the appointment's status to "cancelled"
       canceledAppointment.status = 'cancelled';
 
-      // Perform any additional actions, such as sending a request to the server to update the appointment status
-      // ...
+      // sending a request to the server to update the appointment status
+      const fetchData = async () => {
+        try {
+          const token = sessionStorage.getItem('token');
+          console.log(token);
+          console.log(appointmentId);
+          const response = await axios.patch(
+            `http://localhost:8080/appointments/cancel/${appointmentId}`,
+            {}, // Empty request body
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          console.log(response.data);
+          // Show success alert
+          setShowSuccessAlert(true);
+
+          // After 2 seconds, hide success alert
+          setTimeout(() => {
+            setShowSuccessAlert(false);
+          }, 2000);
+        } catch (error) {
+          console.error('Error canceling appointment:', error);
+          // Handle the error
+        }
+      };
+
+      fetchData();
 
       // Force a re-render by updating the state
       setFilteredAppointments([...filteredAppointments]);
     }
+    setShowModal(false); // Close the modal
   };
 
   useEffect(() => {
@@ -228,27 +269,46 @@ const CalendarWeek: React.FC<CalendarWeekProps> = ({ appointments }) => {
                           {/* Additional popover info */}
                           {hoveredAppointment === appointment._id && (
                             <div className="popover-card mt-2 bg-whiter p-4 shadow-lg">
-                              <Link
-                                className=" text-sm font-medium text-black hover:underline"
-                                to={`${appointment.googleCalendar.link}`}
-                                target="_blank"
-                              >
-                                Google Calendar
-                              </Link>
+                              {appointment.status === 'upcoming' && (
+                                <Link
+                                  className="block text-sm font-medium text-black hover:underline"
+                                  to={`${appointment.googleCalendar.link}`}
+                                  target="_blank"
+                                >
+                                  Google Calendar
+                                </Link>
+                              )}
                               <p
                                 className={`text-${statusColor} mt-2 inline-flex rounded-full bg-primary bg-opacity-10 py-1 px-3 text-sm font-medium`}
                               >
                                 {appointment.status}
                               </p>
                               {appointment.status === 'upcoming' && (
-                                <button
-                                  className="mt-4 rounded-sm bg-danger px-2 py-1 text-white transition-transform hover:scale-105"
-                                  onClick={() =>
-                                    handleCancelAppointment(appointment._id)
-                                  }
-                                >
-                                  Cancel
-                                </button>
+                                <>
+                                  <button
+                                    className="mt-4 rounded-sm bg-danger px-2 py-1 text-white transition-transform hover:scale-105"
+                                    onClick={handleCancelAppointment}
+                                  >
+                                    Cancel
+                                  </button>
+                                  <Modal
+                                    isOpen={showModal}
+                                    onClose={closeCancelModal}
+                                    onConfirm={() =>
+                                      confirmCancelAppointment(appointment._id)
+                                    }
+                                    title="Cancel Appointment"
+                                    message={`Are you sure you want to cancel the appointment with ${
+                                      appointment.client.fullName
+                                    } on ${moment(appointment.date).format(
+                                      'MMM D, YYYY'
+                                    )} at ${
+                                      appointment.time
+                                    }?\nThis will also delete it from Google Calendar`}
+                                    confirmText="Yes, Cancel"
+                                    cancelText="No, Keep"
+                                  />
+                                </>
                               )}
                             </div>
                           )}
@@ -260,6 +320,13 @@ const CalendarWeek: React.FC<CalendarWeekProps> = ({ appointments }) => {
               </tr>
             ))}
           </tbody>
+          {/* Success Alert */}
+          {showSuccessAlert && (
+            <SuccessAlert
+              type="success"
+              message="Appointment has been cancelled successfully"
+            />
+          )}
         </table>
       </div>
     </>

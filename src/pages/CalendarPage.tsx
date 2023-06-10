@@ -39,6 +39,7 @@ export default function CalendarPage() {
             Authorization: `Bearer ${token}`,
           },
         });
+        console.log(response.data);
         setAppointments(response.data);
       } catch (error) {
         console.error('Error retrieving users:', error);

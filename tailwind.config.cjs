@@ -1,4 +1,4 @@
-const defaultTheme = require('tailwindcss/defaultTheme')
+const defaultTheme = require('tailwindcss/defaultTheme');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -44,6 +44,8 @@ module.exports = {
       success: '#219653',
       danger: '#D34053',
       warning: '#FFA70B',
+      bordersuccess: '#34d399',
+      bgsuccess: '#e1f8f0',
     },
     screens: {
       '2xsm': '375px',
@@ -251,4 +253,4 @@ module.exports = {
     },
   },
   plugins: [],
-}
+};
