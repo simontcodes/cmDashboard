@@ -12,6 +12,10 @@ interface Appointment {
     id: string;
     fullName: string;
   };
+  googleCalendar: {
+    link: string;
+    eventId: string;
+  };
   createdAt: Date;
   status: string;
   // Add more properties as needed
@@ -66,6 +70,25 @@ const CalendarWeek: React.FC<CalendarWeekProps> = ({ appointments }) => {
     setCurrentDate(previousWeek);
   };
 
+  const handleCancelAppointment = (appointmentId: string) => {
+    // Find the appointment with the given ID
+    const canceledAppointment = appointments.find(
+      (appointment) => appointment._id === appointmentId
+    );
+
+    // Check if the appointment was found and its status is "upcoming"
+    if (canceledAppointment && canceledAppointment.status === 'upcoming') {
+      // Update the appointment's status to "cancelled"
+      canceledAppointment.status = 'cancelled';
+
+      // Perform any additional actions, such as sending a request to the server to update the appointment status
+      // ...
+
+      // Force a re-render by updating the state
+      setFilteredAppointments([...filteredAppointments]);
+    }
+  };
+
   useEffect(() => {
     setFilteredAppointments(
       appointments.filter((appointment) => {
@@ -76,7 +99,7 @@ const CalendarWeek: React.FC<CalendarWeekProps> = ({ appointments }) => {
         );
       })
     );
-  }, [weekRange]);
+  }, [appointments, weekRange]);
 
   return (
     <>
@@ -156,21 +179,35 @@ const CalendarWeek: React.FC<CalendarWeekProps> = ({ appointments }) => {
                 </td>
                 {datesOfWeek.map((date, index) => {
                   const currentDateObj = moment(startOfWeek).add(index, 'day');
-                  const isWeekend = currentDateObj.isoWeekday() > 5;
                   const appointment = filteredAppointments.find(
                     (apt) =>
                       moment(apt.date).isSame(currentDateObj, 'day') &&
                       apt.time === hour
                   );
 
+                  const getStatusColor = () => {
+                    if (appointment?.status === 'upcoming') {
+                      return 'warning'; // Set the border color for pending status
+                    } else if (appointment?.status === 'completed') {
+                      return 'primary'; // Set the border color for confirmed status
+                    } else if (appointment?.status === 'cancelled') {
+                      return 'danger'; // Set the border color for cancelled status
+                    } else {
+                      return 'primary'; // Default border color
+                    }
+                  };
+
+                  const statusColor = getStatusColor();
+                  const appointmentCardClassName = `event invisible absolute left-2 z-99 mb-1 flex flex-col rounded-sm border-l-[3px] border-${getStatusColor()} bg-gray px-3 py-1 text-left opacity-0 ${
+                    hoveredAppointment === appointment?._id ? 'visible' : ''
+                  } ${
+                    hoveredAppointment === appointment?._id ? 'opacity-100' : ''
+                  } dark:bg-meta-4 md:visible md:opacity-100`;
+
                   return (
                     <td
                       key={index}
-                      className={`ease relative h-15.5 cursor-pointer border border-stroke p-0 transition duration-500 ${
-                        isWeekend
-                          ? 'bg-gray dark:bg-meta-4'
-                          : 'hover:bg-gray dark:hover:bg-meta-4'
-                      } md:h-25 xl:h-15.5`}
+                      className={`ease relative h-15.5 cursor-pointer border border-stroke p-0 transition duration-500 hover:bg-gray dark:hover:bg-meta-4 `}
                       onMouseEnter={() =>
                         setHoveredAppointment(appointment?._id || null)
                       }
@@ -178,34 +215,41 @@ const CalendarWeek: React.FC<CalendarWeekProps> = ({ appointments }) => {
                     >
                       {/* ... */}
                       {appointment && (
-                        <div
-                          className={`event invisible absolute left-2 z-99 mb-1 flex flex-col rounded-sm border-l-[3px] border-primary bg-gray px-3 py-1 text-left opacity-0 ${
-                            hoveredAppointment === appointment._id
-                              ? 'visible'
-                              : ''
-                          } ${
-                            hoveredAppointment === appointment._id
-                              ? 'opacity-100'
-                              : ''
-                          } dark:bg-meta-4 md:visible md:opacity-100`}
-                        >
+                        <div className={appointmentCardClassName}>
                           {/* Original appointment card info */}
                           <div>
                             <span className="event-name text-sm font-semibold text-black dark:text-white">
                               {appointment.typeOfAppointment}
-                            </span>
+                            </span>{' '}
                             <span className="time text-sm font-medium text-black dark:text-white">
                               {appointment.client.fullName}
                             </span>
                           </div>
                           {/* Additional popover info */}
                           {hoveredAppointment === appointment._id && (
-                            <div className="popover-card mt-2 bg-white p-4 shadow-lg">
-                              <h3 className="text-lg font-semibold">
-                                Additional Info
-                              </h3>
-                              <Link to="#"> See it on Google Calendar</Link>
-                              <p className="text-gray-600">this is a popover</p>
+                            <div className="popover-card mt-2 bg-whiter p-4 shadow-lg">
+                              <Link
+                                className=" text-sm font-medium text-black hover:underline"
+                                to={`${appointment.googleCalendar.link}`}
+                                target="_blank"
+                              >
+                                Google Calendar
+                              </Link>
+                              <p
+                                className={`text-${statusColor} mt-2 inline-flex rounded-full bg-primary bg-opacity-10 py-1 px-3 text-sm font-medium`}
+                              >
+                                {appointment.status}
+                              </p>
+                              {appointment.status === 'upcoming' && (
+                                <button
+                                  className="mt-4 rounded-sm bg-danger px-2 py-1 text-white transition-transform hover:scale-105"
+                                  onClick={() =>
+                                    handleCancelAppointment(appointment._id)
+                                  }
+                                >
+                                  Cancel
+                                </button>
+                              )}
                             </div>
                           )}
                         </div>

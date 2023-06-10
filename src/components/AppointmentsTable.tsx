@@ -145,28 +145,7 @@ const AppointmentsTable: React.FC<AppointmentsTableProps> = ({
               </div>
 
               <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
-                {(() => {
-                  switch (appointment.typeOfAppointment) {
-                    case 1:
-                      return (
-                        <p className="text-black dark:text-white">
-                          30 min consultation
-                        </p>
-                      );
-                    case 2:
-                      return (
-                        <p className="text-black dark:text-white">
-                          60 min consultation
-                        </p>
-                      );
-                    case 3:
-                      return (
-                        <p className="text-black dark:text-white">Visa/PR</p>
-                      );
-                    default:
-                      return null;
-                  }
-                })()}
+                {appointment.typeOfAppointment}
               </div>
 
               <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">

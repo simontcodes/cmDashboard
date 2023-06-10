@@ -21,10 +21,7 @@ const adminMenuData = [
     icon: IconCalendar,
     name: 'Calendar',
     alt: 'calendar icon',
-    submenu: [
-      { to: '/calendar', name: 'Month', includes: 'calendar' },
-      { to: '/calendar', name: 'Year', includes: 'calendar' },
-    ],
+    submenu: [],
   },
   {
     to: '/clients',

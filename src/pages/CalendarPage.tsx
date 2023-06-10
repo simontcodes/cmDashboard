@@ -13,6 +13,10 @@ interface Appointment {
     id: string;
     fullName: string;
   };
+  googleCalendar: {
+    link: string;
+    eventId: string;
+  };
   createdAt: Date;
   status: string;
   // Add more properties as needed
@@ -20,7 +24,7 @@ interface Appointment {
 
 export default function CalendarPage() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [view, setView] = useState('month');
+  const [view, setView] = useState('week');
 
   const handleToggle = () => {
     setView((prevView) => (prevView === 'month' ? 'week' : 'month'));

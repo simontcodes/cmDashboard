@@ -1,10 +1,11 @@
 import Breadcrumb from './Breadcrumb';
+import moment from 'moment';
 
 const CalendarMonth = () => {
-  const currentDate = new Date();
+  const currentDate = moment();
   return (
     <>
-      <Breadcrumb pageName={`${currentDate.getMonth()}`} />
+      <Breadcrumb pageName={`${currentDate.format('MMMM')}`} />
 
       <div className="w-full max-w-full rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
         <table className="w-full">
