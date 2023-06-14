@@ -3,7 +3,7 @@ import { AuthContext } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 import { Link } from 'react-router-dom';
-import LogoDark from '../../images/logo/logo-dark.svg';
+import LogoDark from '../../images/logo/logo1.svg';
 import Logo from '../../images/logo/logo.svg';
 import axios from 'axios';
 
@@ -52,16 +52,13 @@ const SignIn: React.FC = () => {
     <div className=" flex h-screen items-center justify-center rounded-sm border border-stroke bg-white  shadow-default dark:border-strokedark dark:bg-boxdark">
       <div className="flex flex-wrap items-center">
         <div className="hidden w-full xl:block xl:w-1/2">
-          <div className="py-17.5 px-26 text-center">
+          <div className="py-15 px-26 text-center">
             <Link className="mb-5.5 inline-block" to="/">
               <img className="hidden dark:block" src={Logo} alt="Logo" />
-              <img className="dark:hidden" src={LogoDark} alt="Logo" />
+              <img className="w-50 dark:hidden" src={LogoDark} alt="Logo" />
             </Link>
 
-            <p className="2xl:px-20">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit
-              suspendisse.
-            </p>
+            <p className="2xl:px-20">Confident Move Immigration</p>
 
             <span className="mt-15 inline-block">
               <svg

@@ -7,13 +7,15 @@ import ClientPage from '../pages/ClientPage';
 import AppointmentsPage from '../pages/AppointmentsPage';
 import PaymentsPage from '../pages/PaymentsPage';
 import ProfilePage from '../pages/ProfilePage';
+import FormPage from '../pages/FormPage';
+import UploadPage from '../pages/UploadPage';
 import NotFoundPage from '../pages/NotFoundPage';
 
 const routes = [
   {
     path: '/',
     component: ECommerce,
-    roles: ['admin'],
+    roles: ['admin', 'client'],
   },
   {
     path: '/calendar',
@@ -45,11 +47,16 @@ const routes = [
     component: ClientPage,
     roles: ['admin', 'client'],
   },
-  // {
-  //   path: '/signin',
-  //   component: SignIn,
-  //   roles: ['any'],
-  // },
+  {
+    path: '/form',
+    component: FormPage,
+    roles: ['client'],
+  },
+  {
+    path: '/upload',
+    component: UploadPage,
+    roles: ['client'],
+  },
   {
     path: '*',
     component: NotFoundPage,

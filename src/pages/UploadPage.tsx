@@ -1,9 +1,9 @@
 import DefaultLayout from '../layout/DefaultLayout';
 
-export default function profilePage() {
+export default function UploadPage() {
   return (
     <DefaultLayout>
-      <div>Profile Page</div>
+      <div>UploadPage</div>
     </DefaultLayout>
   );
 }

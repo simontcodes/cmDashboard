@@ -27,9 +27,11 @@ function App() {
 
   function filterRoutesByRole(routes: Route[], roleType: string): Route[] {
     // Filter the routes based on the specified role
+    console.log(roleType);
     const filteredRoutes = routes.filter((route) => {
       return route.roles.includes(roleType) || route.roles.includes('any');
     });
+    console.log(filteredRoutes);
     return filteredRoutes;
   }
 
