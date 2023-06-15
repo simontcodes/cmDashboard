@@ -10,6 +10,7 @@ import ProfilePage from '../pages/ProfilePage';
 import FormPage from '../pages/FormPage';
 import UploadPage from '../pages/UploadPage';
 import NotFoundPage from '../pages/NotFoundPage';
+import NewPasswordPage from '../pages/NewPasswordPage';
 
 const routes = [
   {
@@ -51,6 +52,11 @@ const routes = [
     path: '/form',
     component: FormPage,
     roles: ['client'],
+  },
+  {
+    path: '/newpassword',
+    component: NewPasswordPage,
+    roles: ['client', 'admin'],
   },
   {
     path: '/upload',

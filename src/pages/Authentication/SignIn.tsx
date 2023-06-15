@@ -43,7 +43,12 @@ const SignIn: React.FC = () => {
       sessionStorage.setItem('token', response.data.token);
       sessionStorage.setItem('role', response.data.role);
       // Continue with any other logic after successful login
-      navigate('/');
+      console.log(response.data);
+      if (response.data.passwordChangeRequired) {
+        navigate('/newpassword');
+      } else {
+        navigate('/');
+      }
     } catch (error) {
       // Handle any login errors
     }

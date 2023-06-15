@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useContext, ComponentType } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import routes from '../data/routes';
@@ -14,6 +15,8 @@ interface Route {
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const authContext = useContext(AuthContext);
+
+  const navigate = useNavigate();
 
   function filterRoutesByRole(routes: Route[], roleType: string): Route[] {
     console.log('inside filtering routes');
@@ -40,6 +43,7 @@ const DropdownUser = () => {
     setRoutesByRole(filterRoutesByRole(routes, 'any'));
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('role');
+    navigate('/signin');
   };
 
   // close on click outside

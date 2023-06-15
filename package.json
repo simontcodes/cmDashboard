@@ -25,6 +25,7 @@
     "react-apexcharts": "^1.4.0",
     "react-date-range": "^1.4.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^4.9.0",
     "react-router-dom": "^6.8.1",
     "sort-by": "^0.0.2"
   },
