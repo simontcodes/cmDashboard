@@ -8,10 +8,14 @@ interface Appointment {
   _id: string;
   time: string;
   date: Date;
-  typeOfAppointment: number;
+  typeOfAppointment: string;
   client: {
     id: string;
     fullName: string;
+  };
+  googleCalendar: {
+    link: string;
+    eventId: string;
   };
   createdAt: Date;
   status: string;
@@ -41,7 +45,7 @@ const AppointmentsTable: React.FC<AppointmentsTableProps> = ({
     setFilteredAppointments(filtered);
     console.log(filteredAppointments);
   };
-
+  console.log(filteredAppointments);
   if (filteredAppointments.length < 0) {
     return <p>Loading</p>;
   }
@@ -73,7 +77,7 @@ const AppointmentsTable: React.FC<AppointmentsTableProps> = ({
         </button>
       </div>
       <div className="flex flex-col">
-        <div className="grid grid-cols-3 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-5">
+        <div className="bg-gray-2 grid grid-cols-3 rounded-sm dark:bg-meta-4 sm:grid-cols-5">
           <div className="p-2.5 xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
               Date and time
@@ -109,9 +113,13 @@ const AppointmentsTable: React.FC<AppointmentsTableProps> = ({
             >
               <div className="flex items-center gap-3 p-2.5 xl:p-5">
                 <p className="hidden text-black dark:text-white sm:block">
-                  <Link to={`/appointment/${appointment._id}`}>
+                  <Link
+                    to={`${appointment.googleCalendar.link}`}
+                    target="blank"
+                    title="See it on Google Calendar"
+                  >
                     {' '}
-                    {moment(appointment.date).format('MMMM Do, YYYY')}{' '}
+                    {moment(appointment.date).format('MMMM Do, YYYY')} at{' '}
                     {appointment.time}
                   </Link>
                 </p>

@@ -42,7 +42,7 @@ interface Appointment {
   _id: string;
   time: string;
   date: Date;
-  typeOfAppointment: number;
+  typeOfAppointment: string;
   client: {
     id: string;
     fullName: string;
