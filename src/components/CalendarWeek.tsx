@@ -89,16 +89,14 @@ const CalendarWeek: React.FC<CalendarWeekProps> = ({ appointments }) => {
     );
 
     // Check if the appointment was found and its status is "upcoming"
-    if (canceledAppointment && canceledAppointment.status === 'upcoming') {
+    if (canceledAppointment && canceledAppointment.status === 'UPCOMING') {
       // Update the appointment's status to "cancelled"
-      canceledAppointment.status = 'cancelled';
+      canceledAppointment.status = 'CANCELLED';
 
       // sending a request to the server to update the appointment status
       const fetchData = async () => {
         try {
           const token = sessionStorage.getItem('token');
-          console.log(token);
-          console.log(appointmentId);
           const response = await axios.patch(
             `http://localhost:8080/appointments/cancel/${appointmentId}`,
             {}, // Empty request body
@@ -227,11 +225,11 @@ const CalendarWeek: React.FC<CalendarWeekProps> = ({ appointments }) => {
                   );
 
                   const getStatusColor = () => {
-                    if (appointment?.status === 'upcoming') {
+                    if (appointment?.status === 'UPCOMING') {
                       return 'warning'; // Set the border color for pending status
-                    } else if (appointment?.status === 'completed') {
+                    } else if (appointment?.status === 'COMPLETED') {
                       return 'primary'; // Set the border color for confirmed status
-                    } else if (appointment?.status === 'cancelled') {
+                    } else if (appointment?.status === 'CANCELLED') {
                       return 'danger'; // Set the border color for cancelled status
                     } else {
                       return 'primary'; // Default border color
@@ -269,7 +267,7 @@ const CalendarWeek: React.FC<CalendarWeekProps> = ({ appointments }) => {
                           {/* Additional popover info */}
                           {hoveredAppointment === appointment._id && (
                             <div className="popover-card mt-2 bg-whiter p-4 shadow-lg">
-                              {appointment.status === 'upcoming' && (
+                              {appointment.status === 'UPCOMING' && (
                                 <Link
                                   className="block text-sm font-medium text-black hover:underline"
                                   to={`${appointment.googleCalendar.link}`}
@@ -283,7 +281,7 @@ const CalendarWeek: React.FC<CalendarWeekProps> = ({ appointments }) => {
                               >
                                 {appointment.status}
                               </p>
-                              {appointment.status === 'upcoming' && (
+                              {appointment.status === 'UPCOMING' && (
                                 <>
                                   <button
                                     className="mt-4 rounded-sm bg-danger px-2 py-1 text-white transition-transform hover:scale-105"

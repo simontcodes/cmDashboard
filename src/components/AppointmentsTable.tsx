@@ -135,17 +135,17 @@ const AppointmentsTable: React.FC<AppointmentsTableProps> = ({
               </div>
 
               <div className="flex items-center justify-center p-2.5 xl:p-5">
-                {appointment.status === 'upcoming' && (
+                {appointment.status === 'UPCOMING' && (
                   <p className="inline-flex rounded-full bg-warning bg-opacity-10 py-1 px-3 text-sm font-medium text-warning">
                     {appointment.status}
                   </p>
                 )}
-                {appointment.status === 'completed' && (
+                {appointment.status === 'COMPLETED' && (
                   <p className="inline-flex rounded-full bg-primary bg-opacity-10 py-1 px-3 text-sm font-medium text-primary">
                     {appointment.status}
                   </p>
                 )}
-                {appointment.status === 'cancelled' && (
+                {appointment.status === 'CANCELLED' && (
                   <p className="inline-flex rounded-full bg-danger bg-opacity-10 py-1 px-3 text-sm font-medium text-danger">
                     {appointment.status}
                   </p>

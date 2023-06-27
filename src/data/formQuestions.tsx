@@ -1,3 +1,5 @@
+import countries from './countries';
+
 const questions = [
   {
     title: 'Education Level',
@@ -9,6 +11,12 @@ const questions = [
       'Bachelors degree',
       'Masters degree',
     ],
+  },
+  {
+    title: 'Nationality',
+    description: 'Please select the country you were born in',
+    type: 'select',
+    answers: countries.map((country) => country.name),
   },
   {
     title: 'Have You been in Canada before?',
