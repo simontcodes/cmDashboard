@@ -50,7 +50,7 @@ const questions = [
     title: 'Are you Married?',
     description: 'Please select your marital status',
     type: 'radio',
-    answers: ['Married', 'Divorced', 'Widowed', 'Common law'],
+    answers: ['Single', 'Married', 'Divorced', 'Widowed', 'Common law'],
   },
   // Add more questions as needed
 ];

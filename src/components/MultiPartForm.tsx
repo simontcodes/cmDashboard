@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import axios from 'axios';
+import SuccessAlert from './Alerts';
+import FailAlert from './Alerts';
 
 interface Answer {
   questionIndex: number;
@@ -35,10 +38,78 @@ const MultiPartForm: React.FC<MultiPartFormProps> = ({ questions }) => {
     startDate: '',
     endDate: '',
   });
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [showFailureAlert, setShowFailureAlert] = useState(false);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(answers); // You can save the data to the database here
+    console.log(answers);
+
+    // Check if all questions have been answered
+    // const isFormValid = questions.every((question, index) => {
+    //   const existingAnswer = answers.find(
+    //     (answer) => answer.questionIndex === index
+    //   );
+    //   const hasSubQuestions =
+    //     question.subQuestions && question.subQuestions.length > 0;
+
+    //   if (hasSubQuestions && existingAnswer) {
+    //     const hasEmptySubAnswer = question.subQuestions?.some((_, subIndex) => {
+    //       const existingSubAnswer = existingAnswer.subAnswers?.[subIndex];
+    //       return !existingSubAnswer || existingSubAnswer.trim() === '';
+    //     });
+
+    //     return !hasEmptySubAnswer;
+    //   }
+
+    //   return existingAnswer && existingAnswer.value.trim() !== '';
+    // });
+
+    // if (!isFormValid) {
+    //   // Display an error message or perform any desired action
+    //   console.log('Please answer all the questions before submitting.');
+    //   return;
+    // }
+
+    const isFormValid = () => {
+      if (answers.length !== questions.length) {
+        setShowFailureAlert(true);
+        setTimeout(() => {
+          setShowFailureAlert(false);
+        }, 3000);
+      }
+    };
+
+    isFormValid();
+
+    console.log(answers);
+    const sendData = async () => {
+      try {
+        const token = sessionStorage.getItem('token');
+        const response = await axios.post(
+          `http://localhost:8080/client/form-data`,
+          { answers },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log(response);
+        // Show success alert
+        if (response.status === 200) {
+          setShowSuccessAlert(true);
+          // After 2 seconds, hide success alert
+          setTimeout(() => {
+            setShowSuccessAlert(false);
+          }, 3000);
+        }
+      } catch (error) {
+        console.error('Error canceling appointment:', error);
+        // Handle the error
+      }
+    };
+    sendData();
   };
 
   const handleAnswerChange = (
@@ -73,30 +144,38 @@ const MultiPartForm: React.FC<MultiPartFormProps> = ({ questions }) => {
   };
   const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
+    const [questionIndex, subQuestionIndex] = name
+      .replace('start_date_', '')
+      .replace('end_date_', '')
+      .split('_')
+      .map((index) => parseInt(index, 10));
 
-    // Update the answers state with the selected dates
     setAnswers((prevAnswers) => {
       const updatedAnswers = [...prevAnswers];
-      const existingAnswer = updatedAnswers.find(
-        (answer) => answer.questionIndex === currentQuestion
+      let existingAnswer = updatedAnswers.find(
+        (answer) => answer.questionIndex === questionIndex
       );
 
-      if (existingAnswer) {
-        // If the answer already exists, update the value
-        existingAnswer.value = value;
+      if (!existingAnswer) {
+        existingAnswer = { questionIndex, value };
+        updatedAnswers.push(existingAnswer);
+      } else if (subQuestionIndex !== undefined && !isNaN(subQuestionIndex)) {
+        if (!existingAnswer.subAnswers) {
+          existingAnswer.subAnswers = [];
+        }
+
+        // Update subAnswer for startDate and endDate separately
+        if (name.startsWith('start_date_')) {
+          existingAnswer.subAnswers[subQuestionIndex] = value;
+        } else if (name.startsWith('end_date_')) {
+          existingAnswer.subAnswers[subQuestionIndex + 1] = value;
+        }
       } else {
-        // If the answer doesn't exist, add a new answer object
-        updatedAnswers.push({ questionIndex: currentQuestion, value });
+        existingAnswer.value = value; // Update main answer value
       }
 
       return updatedAnswers;
     });
-
-    // Update the dateRange state
-    setDateRange((prevDateRange) => ({
-      ...prevDateRange,
-      [name]: value,
-    }));
   };
 
   const nextQuestion = () => {
@@ -159,7 +238,13 @@ const MultiPartForm: React.FC<MultiPartFormProps> = ({ questions }) => {
               <input
                 type="date"
                 name={`start_date_${currentQuestion}`}
-                value={dateRange.startDate}
+                value={
+                  dateRange.startDate ||
+                  answers.find(
+                    (answer) => answer.questionIndex === currentQuestion
+                  )?.value ||
+                  ''
+                }
                 onChange={handleDateChange}
               />
               <br />
@@ -167,7 +252,13 @@ const MultiPartForm: React.FC<MultiPartFormProps> = ({ questions }) => {
               <input
                 type="date"
                 name={`end_date_${currentQuestion}`}
-                value={dateRange.endDate}
+                value={
+                  dateRange.endDate ||
+                  answers.find(
+                    (answer) => answer.questionIndex === currentQuestion
+                  )?.subAnswers?.[0] ||
+                  ''
+                }
                 onChange={handleDateChange}
               />
             </div>
@@ -339,6 +430,13 @@ const MultiPartForm: React.FC<MultiPartFormProps> = ({ questions }) => {
             )}
           </div>
         </form>
+      )}
+      {/* Success Alert */}
+      {showSuccessAlert && (
+        <SuccessAlert type="success" message="Data submited Successfully" />
+      )}
+      {showFailureAlert && (
+        <FailAlert type="danger" message="All questions must be answered" />
       )}
     </div>
   );
